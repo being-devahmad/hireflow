@@ -13,12 +13,16 @@ import {
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "../ui/button";
 import { ThemeToggle } from "./ToggleTheme";
+import { auth } from "@/utils/auth";
+import { UserDropdown } from "./UserDropDown";
 
 export async function Navbar() {
+  const session = await auth();
+
   return (
     <nav className="flex justify-between items-center py-5">
       <Link href="/" className="flex items-center gap-2">
-        <Image src={Logo}  alt="Hire Flow Logo" width={40} height={40} />
+        <Image src={Logo} alt="Hire Flow Logo" width={40} height={40} />
         <h1 className="text-2xl font-bold">
           Hire<span className="text-primary">Flow</span>
         </h1>
@@ -31,56 +35,72 @@ export async function Navbar() {
           Post Job
         </Link>
 
-        <Link
-          href="/login"
-          className={buttonVariants({ variant: "outline", size: "lg" })}
-        >
-          Login
-        </Link>
+        {session?.user ? (
+            <UserDropdown
+              email={session.user.email as string}
+              name={session.user.name as string}
+              image={session.user.image as string}
+            />
+        ) : (
+          <Link
+            href="/login"
+            className={buttonVariants({ variant: "outline", size: "lg" })}
+          >
+            Login
+          </Link>
+        )}
       </div>
 
       {/* Mobile Navigation */}
       <div className="md:hidden flex items-center gap-4">
         <ThemeToggle />
 
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader className="text-left">
-              <SheetTitle>
-                Hire<span className="text-primary">Flow</span>
-              </SheetTitle>
-              <SheetDescription>
-                Find or post your next job opportunity
-              </SheetDescription>
-            </SheetHeader>
+        {session?.user ? (
+            <UserDropdown
+              email={session.user.email as string}
+              name={session.user.name as string}
+              image={session.user.image as string}
+            />
+        ) : (
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader className="text-left">
+                <SheetTitle>
+                  Hire<span className="text-primary">Flow</span>
+                </SheetTitle>
+                <SheetDescription>
+                  Find or post your next job opportunity
+                </SheetDescription>
+              </SheetHeader>
 
-            <div className="flex flex-col gap-4 mt-6">
-              <Link
-                href="/"
-                className="text-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors duration-200"
-              >
-                Find New Job
-              </Link>
-              <Link
-                href="/post-job"
-                className="text-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors duration-200"
-              >
-                Post a Job
-              </Link>
-              <Link
-                href="/login"
-                className="text-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors duration-200"
-              >
-                Login
-              </Link>
-            </div>
-          </SheetContent>
-        </Sheet>
+              <div className="flex flex-col gap-4 mt-6">
+                <Link
+                  href="/"
+                  className="text-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors duration-200"
+                >
+                  Find New Job
+                </Link>
+                <Link
+                  href="/post-job"
+                  className="text-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors duration-200"
+                >
+                  Post a Job
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors duration-200"
+                >
+                  Login
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
       </div>
     </nav>
   );
