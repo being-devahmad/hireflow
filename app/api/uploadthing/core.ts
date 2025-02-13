@@ -1,4 +1,4 @@
-import { userExists } from "@/utils/hooks";
+import { auth } from "@/utils/auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
@@ -15,15 +15,15 @@ export const ourFileRouter = {
     },
   })
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
 
-      const session = await userExists()
+      const session = await auth()
 
       // If you throw, the user will not be able to upload
-      if (!session.id) throw new UploadThingError("Unauthorized");
+      if (!session?.user?.id) throw new UploadThingError("Unauthorized");
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId: session.id};
+      return { userId: session.user.id};
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
