@@ -24,9 +24,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  Company      Company?             // one to one relationship
-  JobSeeker    JobSeeker?           // one to one relationship
-  SavedJobPost SavedJobPost[]       // 
+  Company      Company? // one to one relationship
+  JobSeeker    JobSeeker? // one to one relationship
+  SavedJobPost SavedJobPost[] // 
 }
 
 model Account {
@@ -87,7 +87,7 @@ model Company {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  JobPost   JobPost[]
+  JobPost   JobPost[] // one to many relationship
 }
 
 model JobSeeker {
