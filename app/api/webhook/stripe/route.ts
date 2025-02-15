@@ -9,10 +9,8 @@ export async function POST(req: Request) {
   const body = await req.text();
 
   const headersList = await headers();
-  console.log("HeadersList--->", headersList);
 
   const signature = headersList.get("Stripe-Signature") as string;
-  console.log("signature----->", signature);
 
   let event: Stripe.Event;
 
@@ -59,6 +57,7 @@ export async function POST(req: Request) {
       });
     }
 
+    // Update the job post status to PUBLISHED
     await prisma.jobPost.update({
       where: {
         id: jobId,

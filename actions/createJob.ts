@@ -2,6 +2,7 @@
 
 import { aj } from "@/utils/aj";
 import { userExists } from "@/utils/hooks";
+import { inngest } from "@/utils/inngest/client";
 import { jobListingDurationPricing } from "@/utils/pricingTiers";
 import { prisma } from "@/utils/prisma";
 import { stripe } from "@/utils/stripe";
@@ -88,6 +89,14 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
   if (!pricingTier) {
     throw new Error("Invalid listing duration selected");
   }
+
+  await inngest.send({
+    name: "job/created",
+    data: {
+      jobId: jobPost.id,
+      expirationDays: validateData.listingDuration,
+    },
+  });
 
   const session = await stripe.checkout.sessions.create({
     customer: stripeCustomerId,
